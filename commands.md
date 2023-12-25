@@ -10,7 +10,7 @@ Start and enable service:
 sudo systemctl enable cpu_monitor.service`
 
 Check service status.
-`/etc/systemd/system/cpu_monitor.servicesudo systemctl status cpu_monitor.service`
+`sudo systemctl status cpu_monitor.service`
 
 
 This will start your script as a service managed by systemd, ensuring it runs in the background and automatically starts on system boot.

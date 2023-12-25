@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/path/to/your/cpu_monitor.sh  # Replace with the actual path to your script
+ExecStart=/home/nacho/bin/cpu_monitor.sh  # Replace with the actual path to your script
 Restart=always
 
 [Install]

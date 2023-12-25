@@ -2,7 +2,7 @@
 
 # Function to check CPU load
 check_cpu_load() {
-    local threshold=75  # Adjust this threshold as needed
+    local threshold=90  # Adjust this threshold as needed
     local consecutive=2  # Number of consecutive checks with high load
 
     local cpu_count=$(nproc)  # Get the number of CPU cores
