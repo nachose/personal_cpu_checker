@@ -1,39 +1,50 @@
+#!/usr/bin/env sh
+
+######################################################################
+# @author      : Jose Ignacio Seco Sanz (joseignacio.secosanz@outpayce.com)
+# @file        : cpu_monitor
+# @created     : Sunday May 12, 2024 21:26:23 CEST
+#
+# @description : 
+######################################################################
+
+
+#!/usr/bin/env sh
+
+######################################################################
+# @author      : Jose Ignacio Seco Sanz (joseignacio.secosanz@outpayce.com)
+# @file        : cpu_monitor
+# @created     : Sunday May 12, 2024 19:14:33 CEST
+#
+# @description : 
+######################################################################
+
+
 #!/bin/bash
+
+round() {
+  printf "%.${2}f" "${1}"
+}
 
 # Function to check CPU load
 check_cpu_load() {
     local threshold=90  # Adjust this threshold as needed
-    local consecutive=2  # Number of consecutive checks with high load
+    local consecutive=3  # Number of consecutive checks with high load
 
-    local cpu_count=$(nproc)  # Get the number of CPU cores
-    local -a cpu_load=()
+    # local cpu_count=$(nproc)  # Get the number of CPU cores
+    # local -a cpu_load=()
 
-    for ((i = 0; i < cpu_count; i++)); do
-        cpu_load[$i]=0  # Initialize load for each CPU core
-    done
+    # for ((i = 0; i < cpu_count; i++)); do
+    #     cpu_load[$i]=0  # Initialize load for each CPU core
+    # done
 
     while true; do
         # Get the current CPU load for each core
-        mapfile -t load < <(top -bn1 | awk '/Cpu/ {print $2}' | grep -o '[0-9]\+')
+        cpu_load_nac=$(round $(top -bn1 | awk '/Cpu/ {print $2}'))
 
-        echo "Current CPU Loads: ${load[@]}"
+        echo "Current CPU Load: ${cpu_load_nac}"
 
-        # Update load for each core
-        for ((i = 0; i < cpu_count; i++)); do
-            cpu_load[$i]=${load[$i]}
-        done
-
-        high_load_count=0
-
-        for ((i = 0; i < cpu_count; i++)); do
-            if [ ${cpu_load[$i]} -ge $threshold ]; then
-                ((high_load_count++))
-            fi
-        done
-
-        echo "High CPU Count: $high_load_count"
-
-        if [ $high_load_count -eq $cpu_count ]; then
+        if [ ${cpu_load_nac} -ge ${threshold} ]; then
             ((consecutive--))
             echo "High CPU load detected ($consecutive checks left)"
 
@@ -47,13 +58,14 @@ check_cpu_load() {
                 pkill virtualbox
 
                 echo "Processes terminated."
-                consecutive=2  # Reset consecutive count after terminating processes
+                consecutive=3  # Reset consecutive count after terminating processes
             fi
         else
-            consecutive=2  # Reset consecutive count if all cores are not consistently high
+            echo "Load is not high, reseting counter"
+            consecutive=3  # Reset consecutive count if all cores are not consistently high
         fi
 
-        sleep 15  # Wait for 15 seconds before the next check
+        sleep 10  # Wait for 15 seconds before the next check
     done
 }
 
